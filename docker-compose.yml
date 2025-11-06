@@ -1,0 +1,33 @@
+ 
+
+services:
+  # Selenium Grid - single container with Chrome, Edge, Firefox
+  selenium:
+    image: selenium/standalone-all-browsers:4.38.0-20251101
+    # Expose Grid UI and WebDriver endpoint
+    ports:
+      - "4444:4444"
+    # Prevent "chrome crashed" due to tiny shared memory
+    shm_size: "2g"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+
+  # WDIO test runner (your project)
+  wdio:
+    build: .
+    depends_on:
+      selenium:
+        condition: service_healthy
+    # If you want live mount instead of copying on build, use the next two lines:
+    # volumes:
+    #   - .:/app
+    environment:
+      # Provide Grid connection info to your config (or hardcode in wdio.conf.js)
+      WDIO_PROTOCOL: "http"
+      WDIO_HOST: "selenium"
+      WDIO_PORT: "4444"
+      WDIO_PATH: "/wd/hub"   # works with Selenium Grid 4 for compatibility
+    command: ["npx", "wdio", "run", "./wdio.conf.js"]

@@ -1,0 +1,9 @@
+node_modules
+.git
+.gitignore
+.npmrc
+reports
+allure-results
+allure-report
+.vscode
+.DS_Store
