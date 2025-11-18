@@ -1,5 +1,3 @@
- 
-
 services:
   # Selenium Grid - single container with Chrome, Edge, Firefox
   selenium:
